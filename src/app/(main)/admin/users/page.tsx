@@ -1,98 +1,114 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserPlus, Search } from "lucide-react";
+
+"use client";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import {
+  PlusCircle,
+  ListChecks,
+  Copy,
+  FileText,
+  FileSpreadsheet,
+  Printer,
+  Search,
+  ArrowUpDown,
+  Minus, // For the purple line effect
+} from "lucide-react";
+import { useState, useEffect } from "react";
 
-// Mock user data
-const mockUsers = [
-  { id: "usr001", name: "Alice Wonderland", email: "alice@example.com", role: "Student", status: "Active", joined: "2023-01-15" },
-  { id: "usr002", name: "Bob The Builder", email: "bob@example.com", role: "Student", status: "Active", joined: "2023-02-01" },
-  { id: "usr003", name: "Dr. Anya Sharma", email: "anya.sharma@example.com", role: "Teacher", status: "Active", joined: "2022-08-10" },
-  { id: "usr004", name: "Mr. Smith", email: "smith.fam@example.com", role: "Parent", status: "Inactive", joined: "2023-03-20" },
-  { id: "usr005", name: "Admin User", email: "admin@atelierhub.com", role: "Admin", status: "Active", joined: "2022-05-01" },
-];
+export default function ManageParentPage() {
+  const [currentDate, setCurrentDate] = useState("");
 
+  useEffect(() => {
+    const date = new Date();
+    setCurrentDate(date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, ' ')); // e.g., 29 May 2025
+  }, []);
 
-export default function AdminUsersPage() {
+  const tableHeaders = [
+    "#", "Name", "Email", "Phone", "Profession", "Options"
+  ];
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-3">
-            <Users className="h-8 w-8 text-primary" />
-            User Management
-          </h1>
-          <p className="text-muted-foreground">View, add, edit, and manage all users of Atelier Hub.</p>
+        <h1 className="text-2xl font-semibold">Manage Parent</h1>
+        <div className="text-sm text-muted-foreground">
+          Weblabs | ©. All Right Reserved / {currentDate}
         </div>
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" /> Add New User
+      </div>
+
+      <div className="bg-muted/50 p-4 border rounded-md flex flex-row items-center justify-between shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">NEW PARENT</h2>
+        <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white">
+          <PlusCircle className="mr-2 h-4 w-4" />
+          ADD NEW PARENT HERE
+          {/* Using Minus for the purple line effect as per image */}
+          <Minus className="ml-2 h-4 w-4 text-purple-300" />
         </Button>
       </div>
 
-      <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle>All Users</CardTitle>
-          <CardDescription>A list of all registered users in the system.</CardDescription>
-          <div className="pt-4">
-            <div className="relative">
-              <Input placeholder="Search users by name, email, or role..." className="pl-10" />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <Card className="shadow-sm">
+        <CardHeader className="bg-muted/30 p-3 px-4 border-b flex flex-row items-center">
+          <ListChecks className="h-5 w-5 mr-2 text-foreground" />
+          <CardTitle className="text-md font-semibold text-foreground">LIST PARENTS</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 space-y-4">
+          <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm"><Copy className="mr-2 h-4 w-4"/>Copy</Button>
+              <Button variant="outline" size="sm"><FileText className="mr-2 h-4 w-4"/>CSV</Button>
+              <Button variant="outline" size="sm"><FileSpreadsheet className="mr-2 h-4 w-4"/>Excel</Button>
+              <Button variant="outline" size="sm"><FileText className="mr-2 h-4 w-4"/>PDF</Button>
+              <Button variant="outline" size="sm"><Printer className="mr-2 h-4 w-4"/>Print</Button>
+            </div>
+            <div className="relative ml-auto flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Search:</span>
+              <Input
+                type="search"
+                className="h-9 sm:w-[150px] md:w-[200px]"
+              />
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Joined Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <Badge variant={
-                      user.role === "Admin" ? "destructive" :
-                      user.role === "Teacher" ? "secondary" :
-                      "default"
-                    }>{user.role}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={user.status === "Active" ? "default" : "outline"} className={user.status === "Active" ? "bg-green-500/20 text-green-700 border-green-400" : ""}>
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{user.joined}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">Edit</Button>
-                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive/90">Delete</Button>
+
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {tableHeaders.map(header => (
+                    <TableHead key={header} className="capitalize">
+                      <div className="flex items-center gap-1">
+                        {header}
+                        <ArrowUpDown className="h-3 w-3 text-muted-foreground" />
+                      </div>
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={tableHeaders.length} className="text-center h-24 text-muted-foreground">
+                    No data available in table
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+            <div>Showing 0 to 0 of 0 entries</div>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="sm" disabled>Previous</Button>
+              <Button variant="outline" size="sm" disabled>Next</Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
-      <Card className="bg-accent/10 border-accent/30">
-        <CardHeader>
-            <CardTitle className="text-accent">Admin Note</CardTitle>
-        </CardHeader>
-        <CardContent>
-            <p className="text-sm text-accent/80">
-            This section is for administrative purposes. User management functionalities such as adding, editing roles,
-            and deactivating accounts would be implemented here. For now, this is a visual representation.
-            </p>
-        </CardContent>
-      </Card>
+
+      <footer className="text-center text-sm text-muted-foreground pt-4">
+        Bringing to you by Weblabs Developers
+      </footer>
     </div>
   );
 }
