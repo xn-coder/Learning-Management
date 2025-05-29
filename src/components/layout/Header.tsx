@@ -126,9 +126,9 @@ export default function Header() {
 
 
   return (
-    <header className="sticky top-0 z-30 flex items-center h-16 px-4 md:px-6 bg-card border-b shadow-sm">
-      {/* Left Group: Mobile Menu + Search */}
-      <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-card border-b shadow-sm">
+      {/* Left: Mobile Menu Toggle */}
+      <div className="flex items-center">
         <div className="md:hidden"> 
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
@@ -160,15 +160,18 @@ export default function Header() {
             </SheetContent>
           </Sheet>
         </div>
-        {/* Search bar: removed flex-1 */}
-        <div className="relative max-w-xs ml-2 md:ml-0">
+      </div>
+      
+      {/* Middle: Search Bar */}
+      <div className="flex-1 px-2 sm:px-4">
+        <div className="relative w-full max-w-lg mx-auto">
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input type="search" placeholder="Search..." className="pl-10 h-9 text-sm" />
+            <Input type="search" placeholder="Search..." className="w-full pl-10 h-9 text-sm" />
         </div>
       </div>
       
-      {/* Right Group: Icons - Added flex-1 and justify-end */}
-      <div className="flex flex-1 items-center justify-end gap-3">
+      {/* Right Group: Icons */}
+      <div className="flex items-center gap-1 sm:gap-3">
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Change language">
@@ -200,3 +203,4 @@ export default function Header() {
     </header>
   );
 }
+
