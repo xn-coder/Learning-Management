@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Lora } from 'next/font/google';
 import './globals.css';
-import AppLayout from '@/components/layout/AppLayout';
+// AppLayout is removed from here and applied in (main)/layout.tsx
 import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
@@ -34,9 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} antialiased`}>
-        <AppLayout>
-          {children}
-        </AppLayout>
+        {children} {/* AppLayout is no longer wrapping children here */}
         <Toaster />
       </body>
     </html>
