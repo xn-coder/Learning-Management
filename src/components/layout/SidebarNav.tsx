@@ -10,7 +10,7 @@ import {
     ListFilter, List, Users2, Send, BookCopy, CalendarPlus, Building, FilePlus2, Tag, Activity, PencilLine,
     Eye, Columns, RectangleHorizontal, SquareStack, ClipboardEdit, FileQuestion, FilePlus, UserSquare, Landmark,
     FileSpreadsheet, TrendingDown, Archive, Hotel, Building2, BedSingle, Bus, Route, Truck, SlidersHorizontal,
-    MessageSquareText, Languages, Receipt, CalendarClock, Percent, UserPlus, ListChecks // Added ListChecks here
+    MessageSquareText, Languages, Receipt, CalendarClock, Percent, UserPlus, ListChecks, User // Added User here
 } from 'lucide-react'; 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
 import { usePathname, useRouter } from 'next/navigation'; 
