@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Palette, Mail, Lock, LogIn as LogInIcon, AlertTriangle } from "lucide-react";
+import { Palette, Mail, Lock, LogIn as LogInIcon, AlertTriangle, Sun, Moon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
@@ -43,6 +43,31 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('light');
+
+  useEffect(() => {
+    setMounted(true);
+    const storedTheme = localStorage.getItem('theme');
+    const initialTheme = storedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setCurrentTheme(initialTheme);
+    if (initialTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setCurrentTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -57,15 +82,28 @@ export default function LoginPage() {
     setLoginError(null);
     let loggedIn = false;
     let path = "/";
+    let displayName = "User";
 
     for (const role in rolesCredentials) {
       const creds = rolesCredentials[role as keyof typeof rolesCredentials];
       if (data.email === creds.email && data.password === creds.pass) {
         loggedIn = true;
         path = creds.path;
-        // In a real app, you'd set some auth context/token here
-        // and also update the SidebarNav's currentUserRole state.
-        // For now, we directly navigate. The SidebarNav has a manual role switcher for demo.
+        
+        // Set role and display name in localStorage
+        localStorage.setItem('currentUserRole', role);
+        const displayNames: Record<string, string> = {
+            admin: "Administrator",
+            teacher: "Gosfem Teacher",
+            student: "Student User", // Generic student name
+            parent: "Parent User",   // Generic parent name
+        };
+        displayName = displayNames[role] || "User";
+        localStorage.setItem('currentUserDisplayName', displayName);
+        // Dispatch a storage event so Header component can pick up the change
+        window.dispatchEvent(new Event("storage"));
+
+
         break;
       }
     }
@@ -73,7 +111,7 @@ export default function LoginPage() {
     if (loggedIn) {
       toast({
         title: "Login Successful!",
-        description: "Redirecting to your dashboard...",
+        description: `Welcome ${displayName}! Redirecting to your dashboard...`,
       });
       router.push(path);
     } else {
@@ -87,9 +125,24 @@ export default function LoginPage() {
     form.setValue("password", rolesCredentials[role].pass);
     setLoginError(null);
   };
+  
+  if (!mounted) {
+    // To prevent hydration mismatch for the theme icon, return a placeholder or null
+    return <div className="min-h-screen w-full bg-background" />; 
+  }
 
   return (
-    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2">
+    <div className="min-h-screen w-full grid grid-cols-1 lg:grid-cols-2 relative">
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={toggleTheme}
+        aria-label="Toggle theme"
+        className="absolute top-4 right-4 z-20 bg-card/80 hover:bg-card"
+      >
+        {currentTheme === 'light' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      </Button>
+
       <div className="hidden lg:flex flex-col items-center justify-center bg-gradient-to-br from-primary/70 via-purple-500 to-accent/70 p-12 text-white relative overflow-hidden">
         <Image
           src="https://placehold.co/1200x1800.png"
