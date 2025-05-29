@@ -1,6 +1,7 @@
+
 "use client";
 import Link from 'next/link';
-import { Home, Users, BookOpen, Palette, Settings, FileUp, GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, UsersRound, LayoutDashboard } from 'lucide-react';
+import { Home, Users, BookOpen, Palette, Settings, FileUp, GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, UsersRound, LayoutDashboard, LogIn } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 import React from 'react';
@@ -34,6 +35,8 @@ const navConfig: { [key: string]: NavigationElement[] } = {
     { type: 'divider', key: 'div-guest1'},
     { href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
     { href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
+    { type: 'divider', key: 'div-guest-login'},
+    { href: '/login', label: 'Login', icon: LogIn, type: 'link' },
   ],
   student: [
     { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
@@ -73,11 +76,13 @@ export default function SidebarNav() {
   
   // Effect to simulate role change for testing - remove in real app
   React.useEffect(() => {
-    const roles: Array<'admin' | 'student' | 'teacher' | 'parent' | 'guest'> = ['guest', 'student', 'admin', 'teacher', 'parent'];
-    // Example: You could set this from a dropdown or localStorage for demo purposes
-    // For now, defaults to guest. Set to e.g. 'student' to see student nav.
-    // setCurrentUserRole('student'); 
-  }, []);
+    // Check current path to see if we are on a dashboard to infer role for demo
+    if (pathname.startsWith('/student/dashboard')) setCurrentUserRole('student');
+    else if (pathname.startsWith('/admin/dashboard')) setCurrentUserRole('admin');
+    else if (pathname.startsWith('/teacher/dashboard')) setCurrentUserRole('teacher');
+    else if (pathname.startsWith('/parent/dashboard')) setCurrentUserRole('parent');
+    // else it remains 'guest' or its previous state if not a dashboard page
+  }, [pathname]);
 
 
   const getNavItemsForRole = (role: 'admin' | 'student' | 'teacher' | 'parent' | 'guest'): NavigationElement[] => {
@@ -85,7 +90,10 @@ export default function SidebarNav() {
     // All roles should see the home page, unless their dashboard is the home page.
     const hasDashboardAsHome = items.some(item => item.type === 'link' && item.isDashboard && item.href === '/');
     if (role !== 'guest' && !hasDashboardAsHome && !items.find(item => item.type==='link' && item.href === '/')) {
-      items = [{ href: '/', label: 'Home', icon: Home, type: 'link' }, {type: 'divider', key: 'div-home'}, ...items];
+      // Add Home link only if not already present and not guest (guest already has it)
+      if(!items.find(i => i.type === 'link' && i.href === '/')) {
+        items = [{ href: '/', label: 'Home', icon: Home, type: 'link' }, {type: 'divider', key: 'div-home'}, ...items];
+      }
     }
     return items;
   };
@@ -128,7 +136,21 @@ export default function SidebarNav() {
         <SidebarGroupLabel className="px-2 py-1 mb-1 text-xs">Demo Role</SidebarGroupLabel>
         <select 
             value={currentUserRole} 
-            onChange={(e) => setCurrentUserRole(e.target.value as any)}
+            onChange={(e) => {
+              const newRole = e.target.value as any;
+              setCurrentUserRole(newRole);
+              // Attempt to navigate to the new role's dashboard
+              const roleConfig = navConfig[newRole];
+              if (roleConfig) {
+                const dashboardItem = roleConfig.find(item => item.type === 'link' && item.isDashboard) as NavItem | undefined;
+                if (dashboardItem && dashboardItem.href) {
+                  // Forcing a full page navigation to ensure layout re-renders if necessary for demo
+                  window.location.href = dashboardItem.href;
+                } else if (newRole === 'guest') {
+                   window.location.href = '/';
+                }
+              }
+            }}
             className="w-full p-2 rounded-md bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border text-sm"
         >
             <option value="guest">Guest</option>
@@ -141,3 +163,4 @@ export default function SidebarNav() {
     </SidebarMenu>
   );
 }
+
