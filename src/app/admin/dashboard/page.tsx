@@ -1,105 +1,158 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShieldCheck, Users, Settings, BarChart3 } from "lucide-react";
-import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Users, GraduationCap, BookMarked, DollarSign, UserCog, UserCheck, Briefcase, TrendingUp, TrendingDown, CalendarDays, BarChartHorizontalBig } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function AdminDashboardPage() {
-  return (
-    <div className="space-y-8">
-      <Card className="shadow-lg">
-        <CardHeader>
-          <div className="flex items-center space-x-3 mb-2">
-            <ShieldCheck className="h-10 w-10 text-primary" />
-            <CardTitle className="text-3xl">Admin Dashboard</CardTitle>
-          </div>
-          <CardDescription>Welcome, Administrator. Manage users, courses, and site settings from here.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            This is your central hub for overseeing all aspects of Atelier Hub.
-            Utilize the tools below to ensure the smooth operation of the platform.
-          </p>
-        </CardContent>
-      </Card>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardActionCard
-          icon={<Users className="h-8 w-8 text-accent" />}
-          title="Manage Users"
-          description="View, edit, and manage all user accounts including students, teachers, and parents."
-          link="/admin/users"
-          linkText="Go to User Management"
-        />
-        <DashboardActionCard
-          icon={<Settings className="h-8 w-8 text-accent" />}
-          title="Manage Courses"
-          description="Create, update, and organize course offerings in the catalog."
-          link="/admin/courses"
-          linkText="Go to Course Management"
-        />
-        <DashboardActionCard
-          icon={<BarChart3 className="h-8 w-8 text-accent" />}
-          title="View Analytics"
-          description="Access reports and statistics on platform usage, course enrollment, and student progress."
-          link="#" // Placeholder for analytics page
-          linkText="View Site Analytics"
-          disabled
-        />
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Stats</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatItem label="Total Users" value="1,250" />
-          <StatItem label="Active Courses" value="48" />
-          <StatItem label="New Submissions" value="15" />
-          <StatItem label="Pending Approvals" value="3" />
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-interface DashboardActionCardProps {
-  icon: React.ReactNode;
+interface StatCardProps {
   title: string;
-  description: string;
-  link: string;
-  linkText: string;
-  disabled?: boolean;
+  value: string | number;
+  icon: React.ElementType;
+  iconBgColor: string; // Tailwind CSS class for background color
 }
 
-function DashboardActionCard({ icon, title, description, link, linkText, disabled }: DashboardActionCardProps) {
+function StatCard({ title, value, icon: Icon, iconBgColor }: StatCardProps) {
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-2">
-        <div className="p-3 bg-accent/10 rounded-md">{icon}</div>
-        <div>
-          <CardTitle className="text-xl mb-1">{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+    <Card className="shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="p-4 flex items-center gap-4">
+        <div className={`p-3 rounded-full ${iconBgColor}`}>
+          <Icon className="h-6 w-6 text-white" />
         </div>
-      </CardHeader>
-      <CardContent>
-        <Button asChild variant="outline" className="w-full" disabled={disabled}>
-          <Link href={link}>{linkText}</Link>
-        </Button>
+        <div>
+          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-sm text-muted-foreground">{title}</p>
+        </div>
       </CardContent>
     </Card>
   );
 }
 
-interface StatItemProps {
-  label: string;
-  value: string;
-}
+const mockTeachers = [
+  { id: "t1", name: "Gosfem Teacher", email: "teacher@teacher.com", phone: "8033527716", avatarUrl: "https://placehold.co/40x40.png" },
+  { id: "t2", name: "Dr. Anya Sharma", email: "anya.sharma@example.com", phone: "+1234567891", avatarUrl: "https://placehold.co/40x40.png" },
+];
 
-function StatItem({ label, value }: StatItemProps) {
+const mockStudents = [
+  { id: "s1", name: "Community Student", email: "student@student.com", phone: "+912345667", avatarUrl: "https://placehold.co/40x40.png" },
+  { id: "s2", name: "Alex Johnson", email: "alex.j@example.com", phone: "+1987654321", avatarUrl: "https://placehold.co/40x40.png" },
+];
+
+export default function AdminDashboardPage() {
+  const currentDate = new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); // e.g., 29 May,2025
+
   return (
-    <div className="p-4 bg-muted/50 rounded-lg text-center">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="text-2xl font-semibold">{value}</p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+        <div className="text-sm text-muted-foreground">
+          Weblabs | ©. All Right Reserved / {currentDate}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <StatCard title="Students" value="1" icon={Users} iconBgColor="bg-sky-500" />
+        <StatCard title="Teachers" value="1" icon={GraduationCap} iconBgColor="bg-lime-500" />
+        <StatCard title="Parents" value="0" icon={Users} iconBgColor="bg-blue-500" />
+        <StatCard title="Assignment" value="0" icon={BookMarked} iconBgColor="bg-slate-700" />
+        <StatCard title="Expense" value="INR" icon={TrendingDown} iconBgColor="bg-red-500" />
+        <StatCard title="Income" value="INR" icon={TrendingUp} iconBgColor="bg-green-500" />
+        <StatCard title="Admin" value="1" icon={UserCog} iconBgColor="bg-indigo-500" />
+        <StatCard title="Attendance" value="0" icon={UserCheck} iconBgColor="bg-amber-500" />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Statistics Overview 1</CardTitle>
+            <CardDescription>Placeholder for a chart or graph.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-64 flex items-center justify-center bg-muted/50 rounded-md">
+            <BarChartHorizontalBig className="h-16 w-16 text-muted-foreground" />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Statistics Overview 2</CardTitle>
+            <CardDescription>Placeholder for another chart or graph.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-64 flex items-center justify-center bg-muted/50 rounded-md">
+            <BarChartHorizontalBig className="h-16 w-16 text-muted-foreground" />
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recently Added Teachers</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockTeachers.map((teacher) => (
+                  <TableRow key={teacher.id}>
+                    <TableCell>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={teacher.avatarUrl || `https://placehold.co/40x40.png?text=${teacher.name.charAt(0)}`} alt={teacher.name} data-ai-hint="teacher avatar" />
+                        <AvatarFallback>{teacher.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell className="font-medium">{teacher.name}</TableCell>
+                    <TableCell>{teacher.email}</TableCell>
+                    <TableCell>{teacher.phone}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recently Added Students</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Phone</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockStudents.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell>
+                       <Avatar className="h-8 w-8">
+                        <AvatarImage src={student.avatarUrl || `https://placehold.co/40x40.png?text=${student.name.charAt(0)}`} alt={student.name} data-ai-hint="student avatar" />
+                        <AvatarFallback>{student.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell className="font-medium">{student.name}</TableCell>
+                    <TableCell>{student.email}</TableCell>
+                    <TableCell>{student.phone}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+      
+      <footer className="text-center text-sm text-muted-foreground pt-4">
+        Bringing to you by Weblabs Developers
+      </footer>
     </div>
   );
 }

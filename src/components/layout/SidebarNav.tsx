@@ -1,18 +1,28 @@
 
 "use client";
 import Link from 'next/link';
-import { Home, Users, BookOpen, Palette, Settings, FileUp, GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, UsersRound, LayoutDashboard, LogIn } from 'lucide-react';
+import { 
+    LayoutDashboard, Users, BookOpen, Palette, Settings, FileUp, 
+    GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, 
+    UsersRound, LogIn, Home, CreditCard, Briefcase, BarChart3, 
+    UserCog, CalendarCheck, Download, FileText, ShieldCheck, 
+    ClipboardList, Banknote, BedDouble, Car, Settings2, FilePieChart, UserMinus, ChevronDown
+} from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation'; // Added useRouter
 import React from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 type NavItem = {
   href?: string;
   label: string;
   icon: React.ElementType;
-  role?: 'admin' | 'student' | 'teacher' | 'parent' | 'guest'; // guest for public links
+  role?: 'admin' | 'student' | 'teacher' | 'parent' | 'guest';
   type?: 'link';
   isDashboard?: boolean;
+  action?: () => void; // For logout
+  key?: string; // Ensure key for map
 };
 
 type NavHeader = {
@@ -26,73 +36,106 @@ type NavDivider = {
   key: string;
 };
 
-type NavigationElement = NavItem | NavHeader | NavDivider;
+type UserProfileElement = {
+  type: 'userProfile';
+  key: string;
+  name: string;
+  avatarUrl?: string;
+};
+
+type NavigationElement = NavItem | NavHeader | NavDivider | UserProfileElement;
 
 
 const navConfig: { [key: string]: NavigationElement[] } = {
   guest: [
-    { href: '/', label: 'Home', icon: Home, type: 'link' },
+    { key: 'guest-home', href: '/', label: 'Home', icon: Home, type: 'link' },
     { type: 'divider', key: 'div-guest1'},
-    { href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
-    { href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
+    { key: 'guest-courses', href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
+    { key: 'guest-ai', href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
     { type: 'divider', key: 'div-guest-login'},
-    { href: '/login', label: 'Login', icon: LogIn, type: 'link' },
+    { key: 'guest-login', href: '/login', label: 'Login', icon: LogIn, type: 'link' },
   ],
   student: [
-    { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
+    { key: 'std-dash', href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
     { type: 'divider', key: 'div-std1'},
-    { href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
-    { href: '/student/my-portfolio', label: 'My Portfolio', icon: GalleryHorizontalEnd, type: 'link' }, // Dynamic ID will be handled later
-    { href: '/student/submit-artwork', label: 'Submit Artwork', icon: FileUp, type: 'link' },
-    { href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
+    { key: 'std-courses', href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
+    { key: 'std-portfolio', href: '/student/my-portfolio', label: 'My Portfolio', icon: GalleryHorizontalEnd, type: 'link' },
+    { key: 'std-submit', href: '/student/submit-artwork', label: 'Submit Artwork', icon: FileUp, type: 'link' },
+    { key: 'std-ai', href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
+    { type: 'divider', key: 'div-std-logout'},
+    { key: 'std-logout', label: 'Logout', icon: UserMinus, type: 'link', action: () => { console.log("Logout student"); /* actual logout logic */ } },
   ],
   teacher: [
-    { href: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
+    { key: 'tch-dash', href: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
     { type: 'divider', key: 'div-tch1'},
-    { href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
-    // Teacher specific links e.g., manage submissions, gradebook
+    { key: 'tch-courses', href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
+    { type: 'divider', key: 'div-tch-logout'},
+    { key: 'tch-logout', label: 'Logout', icon: UserMinus, type: 'link', action: () => { console.log("Logout teacher"); } },
   ],
   parent: [
-    { href: '/parent/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
+    { key: 'par-dash', href: '/parent/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
     { type: 'divider', key: 'div-par1'},
-    // Parent specific links e.g., child's progress
+    { type: 'divider', key: 'div-par-logout'},
+    { key: 'par-logout', label: 'Logout', icon: UserMinus, type: 'link', action: () => { console.log("Logout parent"); } },
   ],
   admin: [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: ShieldAlert, type: 'link', isDashboard: true },
-    { type: 'divider', key: 'div-adm1'},
-    { href: '/admin/users', label: 'Manage Users', icon: Users, type: 'link' },
-    { href: '/admin/courses', label: 'Manage Courses', icon: Settings, type: 'link' },
-    { type: 'divider', key: 'div-adm2'},
-    { href: '/courses', label: 'View Catalog', icon: BookOpen, type: 'link' },
-    { href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
+    { type: 'userProfile', key: 'admin-profile', name: 'Administrator' },
+    { type: 'divider', key: 'div-admin-profile-sep'},
+    { key: 'admin-dash', href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
+    // { key: 'admin-academics', label: 'Academics', icon: GraduationCap, type: 'link', href: '#' }, // Example, replace # with actual links
+    { key: 'admin-teachers', label: 'Teachers', icon: UserCheck, type: 'link', href: '/admin/users' }, // Assuming this maps to user management filtered for teachers
+    { key: 'admin-manage-students', label: 'Manage Students', icon: Users, type: 'link', href: '/admin/users' }, // Assuming this maps to user management
+    { key: 'admin-attendance', label: 'Attendance', icon: CalendarCheck, type: 'link', href: '#' },
+    // { key: 'admin-download', label: 'Download Page', icon: Download, type: 'link', href: '#' },
+    { key: 'admin-parents', label: 'Parents', icon: UsersRound, type: 'link', href: '/admin/users' }, // Assuming this maps to user management
+    // { key: 'admin-class-section', label: 'Class & Section', icon: Briefcase, type: 'link', href: '#' },
+    { key: 'admin-subjects', label: 'Subjects', icon: BookOpen, type: 'link', href: '/admin/courses' }, // Mapping to course management for now
+    // { key: 'admin-exams', label: 'Exams', icon: ClipboardList, type: 'link', href: '#' },
+    // { key: 'admin-student-scores', label: 'Student Scores', icon: BarChart3, type: 'link', href: '#' },
+    // { key: 'admin-fee', label: 'Fee Collection', icon: Banknote, type: 'link', href: '#' },
+    // { key: 'admin-expenses', label: 'Expenses', icon: CreditCard, type: 'link', href: '#' },
+    // { key: 'admin-hostel', label: 'Hostel', icon: BedDouble, type: 'link', href: '#' },
+    // { key: 'admin-transport', label: 'Transportation', icon: Car, type: 'link', href: '#' },
+    { key: 'admin-settings', label: 'System Settings', icon: Settings2, type: 'link', href: '#' },
+    // { key: 'admin-reports', label: 'Reports', icon: FilePieChart, type: 'link', href: '#' },
+    { key: 'admin-role-mgmt', label: 'Role Managements', icon: UserCog, type: 'link', href: '#' }, // Or ShieldCheck
+    { type: 'divider', key: 'div-admin-logout'},
+    { key: 'admin-logout', label: 'Logout', icon: UserMinus, type: 'link', href: '/login', action: () => { console.log("Logout admin"); /* actual logout logic */ localStorage.removeItem('currentUserRole');} },
   ],
 };
 
 
 export default function SidebarNav() {
   const pathname = usePathname();
-  // Mock current user role. In a real app, this would come from auth context.
+  const router = useRouter(); // For navigation on logout
   const [currentUserRole, setCurrentUserRole] = React.useState<'admin' | 'student' | 'teacher' | 'parent' | 'guest'>('guest');
   
-  // Effect to simulate role change for testing - remove in real app
   React.useEffect(() => {
-    // Check current path to see if we are on a dashboard to infer role for demo
-    if (pathname.startsWith('/student/dashboard')) setCurrentUserRole('student');
-    else if (pathname.startsWith('/admin/dashboard')) setCurrentUserRole('admin');
-    else if (pathname.startsWith('/teacher/dashboard')) setCurrentUserRole('teacher');
-    else if (pathname.startsWith('/parent/dashboard')) setCurrentUserRole('parent');
-    // else it remains 'guest' or its previous state if not a dashboard page
+    // Try to get role from localStorage, or infer from path
+    const storedRole = localStorage.getItem('currentUserRole') as typeof currentUserRole | null;
+    if (storedRole && navConfig[storedRole]) {
+        setCurrentUserRole(storedRole);
+    } else if (pathname.startsWith('/student')) setCurrentUserRole('student');
+    else if (pathname.startsWith('/admin')) setCurrentUserRole('admin');
+    else if (pathname.startsWith('/teacher')) setCurrentUserRole('teacher');
+    else if (pathname.startsWith('/parent')) setCurrentUserRole('parent');
+    else setCurrentUserRole('guest');
   }, [pathname]);
+
+  // Persist role on change
+  React.useEffect(() => {
+    if (currentUserRole !== 'guest') { // Don't persist guest role if it was inferred
+      localStorage.setItem('currentUserRole', currentUserRole);
+    }
+  }, [currentUserRole]);
 
 
   const getNavItemsForRole = (role: 'admin' | 'student' | 'teacher' | 'parent' | 'guest'): NavigationElement[] => {
     let items = navConfig[role] || navConfig.guest;
-    // All roles should see the home page, unless their dashboard is the home page.
-    const hasDashboardAsHome = items.some(item => item.type === 'link' && item.isDashboard && item.href === '/');
-    if (role !== 'guest' && !hasDashboardAsHome && !items.find(item => item.type==='link' && item.href === '/')) {
-      // Add Home link only if not already present and not guest (guest already has it)
-      if(!items.find(i => i.type === 'link' && i.href === '/')) {
-        items = [{ href: '/', label: 'Home', icon: Home, type: 'link' }, {type: 'divider', key: 'div-home'}, ...items];
+    // For Admin, other roles might have their own landing pages not necessarily '/'
+    if (role !== 'guest' && role !== 'admin' && !items.find(item => item.type === 'link' && item.href === '/')) {
+      if(!items.find(i => i.type === 'link' && i.key === `${role}-home`)) {
+        // items = [{ key: `${role}-home`, href: '/', label: 'Home', icon: Home, type: 'link' }, {type: 'divider', key: 'div-home'}, ...items];
       }
     }
     return items;
@@ -100,11 +143,18 @@ export default function SidebarNav() {
   
   const navItemsToDisplay = getNavItemsForRole(currentUserRole);
 
+  const handleLogout = (itemAction?: () => void) => {
+    if (itemAction) itemAction();
+    localStorage.removeItem('currentUserRole');
+    setCurrentUserRole('guest'); // Update state
+    router.push('/login'); // Navigate to login
+  };
+
   return (
     <SidebarMenu className="p-2">
       {navItemsToDisplay.map((item, index) => {
         if (item.type === 'divider') {
-          return <hr key={item.key || `divider-${index}`} className="my-3 border-sidebar-border" />;
+          return <hr key={item.key || `divider-${index}`} className="my-2 border-sidebar-border" />;
         }
         if (item.type === 'header') {
           return (
@@ -113,54 +163,51 @@ export default function SidebarNav() {
             </SidebarGroupLabel>
           );
         }
+        if (item.type === 'userProfile') {
+          return (
+            <div key={item.key} className="px-2 py-2 flex items-center gap-3 mb-1 hover:bg-sidebar-accent rounded-md cursor-pointer group">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={item.avatarUrl || "https://placehold.co/40x40.png"} alt={item.name} data-ai-hint="admin avatar small" />
+                <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <span className="font-medium text-sm text-sidebar-foreground group-hover:text-sidebar-accent-foreground">{item.name}</span>
+              <ChevronDown className="h-4 w-4 ml-auto text-sidebar-foreground/70 group-hover:text-sidebar-accent-foreground" />
+            </div>
+          );
+        }
+        
         // Item is a link
         const IconComponent = item.icon;
+        const effectiveHref = item.href || '#'; // Default to '#' if href is undefined
+
         return (
-          <SidebarMenuItem key={item.href || `item-${index}`}>
-            <Link href={item.href!} passHref legacyBehavior>
+          <SidebarMenuItem key={item.key || item.href || `item-${index}`}>
+            {item.label === 'Logout' ? (
+                 <SidebarMenuButton 
+                    onClick={() => handleLogout(item.action)}
+                    className="w-full justify-start text-sm h-9"
+                    variant={"ghost"}
+                    asChild={false} 
+                  >
+                    <IconComponent className="h-5 w-5 mr-3 shrink-0" />
+                    <span className="group-data-[collapsible=icon]:hidden truncate">{item.label}</span>
+              </SidebarMenuButton>
+            ) : (
+            <Link href={effectiveHref} passHref legacyBehavior>
               <SidebarMenuButton 
-                isActive={pathname === item.href} 
-                className="w-full justify-start text-sm h-10"
-                variant={pathname === item.href ? "default" : "ghost"} // 'default' for active has --sidebar-primary bg
-                asChild={false} // Ensure it's a button
+                isActive={pathname === effectiveHref} 
+                className="w-full justify-start text-sm h-9"
+                variant={pathname === effectiveHref ? "default" : "ghost"}
+                asChild={false} 
               >
                 <IconComponent className="h-5 w-5 mr-3 shrink-0" />
                 <span className="group-data-[collapsible=icon]:hidden truncate">{item.label}</span>
               </SidebarMenuButton>
             </Link>
+            )}
           </SidebarMenuItem>
         );
       })}
-       {/* Role switcher for demo purposes */}
-       <SidebarGroup className="mt-auto pt-4 border-t border-sidebar-border">
-        <SidebarGroupLabel className="px-2 py-1 mb-1 text-xs">Demo Role</SidebarGroupLabel>
-        <select 
-            value={currentUserRole} 
-            onChange={(e) => {
-              const newRole = e.target.value as any;
-              setCurrentUserRole(newRole);
-              // Attempt to navigate to the new role's dashboard
-              const roleConfig = navConfig[newRole];
-              if (roleConfig) {
-                const dashboardItem = roleConfig.find(item => item.type === 'link' && item.isDashboard) as NavItem | undefined;
-                if (dashboardItem && dashboardItem.href) {
-                  // Forcing a full page navigation to ensure layout re-renders if necessary for demo
-                  window.location.href = dashboardItem.href;
-                } else if (newRole === 'guest') {
-                   window.location.href = '/';
-                }
-              }
-            }}
-            className="w-full p-2 rounded-md bg-sidebar-accent text-sidebar-accent-foreground border border-sidebar-border text-sm"
-        >
-            <option value="guest">Guest</option>
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-            <option value="parent">Parent</option>
-            <option value="admin">Admin</option>
-        </select>
-       </SidebarGroup>
     </SidebarMenu>
   );
 }
-
