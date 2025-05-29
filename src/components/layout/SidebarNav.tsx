@@ -6,8 +6,8 @@ import {
     GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, 
     UsersRound, LogIn, Home, CreditCard, Briefcase, BarChart3, 
     UserCog, CalendarCheck, Download, FileText, ShieldCheck, 
-    ClipboardList, Banknote, BedDouble, Car, Settings2, FilePieChart, UserMinus, ChevronDown
-} from 'lucide-react';
+    ClipboardList, Banknote, BedDouble, Car, Settings2, FilePieChart, UserMinus, ChevronDown, ChevronRight
+} from 'lucide-react'; // Added ChevronRight
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
 import { usePathname, useRouter } from 'next/navigation'; 
 import React from 'react';
@@ -22,7 +22,8 @@ type NavItem = {
   type?: 'link';
   isDashboard?: boolean;
   action?: () => void; 
-  key?: string; 
+  key?: string;
+  showChevron?: boolean;
 };
 
 type NavHeader = {
@@ -57,12 +58,13 @@ const navConfig: { [key: string]: NavigationElement[] } = {
     { key: 'guest-login', href: '/login', label: 'Login', icon: LogIn, type: 'link' },
   ],
   student: [
+    { type: 'userProfile', key: 'student-profile', name: 'Community Student', avatarUrl: 'https://placehold.co/40x40.png?text=CS', dataAiHint: "student community avatar" },
+    { type: 'divider', key: 'div-student-profile-sep'},
     { key: 'std-dash', href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, type: 'link', isDashboard: true },
-    { type: 'divider', key: 'div-std1'},
-    { key: 'std-courses', href: '/courses', label: 'Course Catalog', icon: BookOpen, type: 'link' },
-    { key: 'std-portfolio', href: '/student/my-portfolio', label: 'My Portfolio', icon: GalleryHorizontalEnd, type: 'link' },
-    { key: 'std-submit', href: '/student/submit-artwork', label: 'Submit Artwork', icon: FileUp, type: 'link' },
-    { key: 'std-ai', href: '/ai-prompt-generator', label: 'AI Prompts', icon: Palette, type: 'link' },
+    { key: 'std-academics', href: '#', label: 'Academics', icon: GraduationCap, type: 'link', showChevron: true }, // Placeholder link
+    { key: 'std-invoice', href: '#', label: 'Invoice', icon: FileText, type: 'link' }, // Placeholder link
+    { key: 'std-payment', href: '#', label: 'Payment History', icon: CreditCard, type: 'link' }, // Placeholder link
+    { key: 'std-manage-profile', href: '#', label: 'Manage Profile', icon: UserCog, type: 'link' }, // Placeholder link
     { type: 'divider', key: 'div-std-logout'},
     { key: 'std-logout', label: 'Logout', icon: UserMinus, type: 'link', href: '/login', action: () => { localStorage.removeItem('currentUserRole'); localStorage.removeItem('currentUserDisplayName'); } },
   ],
@@ -102,8 +104,8 @@ const navConfig: { [key: string]: NavigationElement[] } = {
 const roleDisplayNames: Record<string, string | undefined> = {
     admin: "Administrator",
     teacher: "Gosfem Teacher",
-    student: "Student User", // Generic name for student
-    parent: "Parent User",   // Generic name for parent
+    student: "Community Student", 
+    parent: "Parent User",   
     guest: "Guest"
 };
 
@@ -126,12 +128,16 @@ export default function SidebarNav() {
     
     setCurrentUserRole(activeRole);
 
+    // Update displayName in localStorage based on the determined activeRole
     const displayName = roleDisplayNames[activeRole];
     if (displayName) {
         localStorage.setItem('currentUserDisplayName', displayName);
     } else {
-        localStorage.removeItem('currentUserDisplayName');
+        localStorage.removeItem('currentUserDisplayName'); // Or set to a default like "Guest"
     }
+     // Dispatch storage event to notify Header about the potential displayName change
+    window.dispatchEvent(new Event("storage"));
+
 
   }, [pathname]);
 
@@ -144,6 +150,8 @@ export default function SidebarNav() {
       } else {
           localStorage.removeItem('currentUserDisplayName');
       }
+       // Dispatch storage event to notify Header about the potential displayName change
+      window.dispatchEvent(new Event("storage"));
     }
   }, [currentUserRole]);
 
@@ -155,9 +163,11 @@ export default function SidebarNav() {
   const navItemsToDisplay = getNavItemsForRole(currentUserRole);
 
   const handleLogout = (itemAction?: () => void) => {
-    if (itemAction) itemAction(); // This executes the specific action from navConfig if any
-    // Clearing role and display name is now part of the action in navConfig
+    if (itemAction) itemAction(); 
     setCurrentUserRole('guest'); 
+    localStorage.removeItem('currentUserRole'); // Ensure role is cleared
+    localStorage.removeItem('currentUserDisplayName'); // Ensure display name is cleared
+    window.dispatchEvent(new Event("storage")); // Notify header
     router.push('/login'); 
   };
 
@@ -175,10 +185,12 @@ export default function SidebarNav() {
           );
         }
         if (item.type === 'userProfile') {
+          const avatarSrc = item.avatarUrl || `https://placehold.co/40x40.png?text=${item.name.charAt(0)}`;
+          const avatarHint = item.dataAiHint || `${item.name.toLowerCase().replace(' ', '_')} avatar small`;
           return (
             <div key={item.key} className="px-2 py-2 flex items-center gap-3 mb-1 hover:bg-sidebar-accent rounded-md cursor-pointer group">
               <Avatar className="h-9 w-9">
-                <AvatarImage src={item.avatarUrl || "https://placehold.co/40x40.png"} alt={item.name} data-ai-hint={item.dataAiHint || "user avatar small"} />
+                <AvatarImage src={avatarSrc} alt={item.name} data-ai-hint={avatarHint} />
                 <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <span className="font-medium text-sm text-sidebar-foreground group-hover:text-sidebar-accent-foreground">{item.name}</span>
@@ -216,7 +228,8 @@ export default function SidebarNav() {
                 asChild={false} 
               >
                 <IconComponent className="h-5 w-5 mr-3 shrink-0" />
-                <span className="group-data-[collapsible=icon]:hidden truncate">{item.label}</span>
+                <span className="group-data-[collapsible=icon]:hidden truncate flex-grow">{item.label}</span>
+                {item.showChevron && <ChevronRight className="h-4 w-4 text-sidebar-foreground/70 group-hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:hidden" />}
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
