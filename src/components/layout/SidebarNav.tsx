@@ -7,7 +7,10 @@ import {
     UsersRound, LogIn, Home, CreditCard, Briefcase, BarChart3, 
     UserCog, CalendarCheck, Download, FileText, ShieldCheck, 
     ClipboardList, Banknote, BedDouble, Car, Settings2, FilePieChart, UserMinus, ChevronDown, ChevronRight,
-    ListFilter, List, Users2, Send, BookCopy, CalendarPlus // Added icons for Academics sub-menu
+    ListFilter, List, Users2, Send, BookCopy, CalendarPlus, Building, FilePlus2, Tag, Activity, PencilLine,
+    Eye, Columns, RectangleHorizontal, SquareStack, ClipboardEdit, FileQuestion, FilePlus, UserSquare, Landmark,
+    FileSpreadsheet, TrendingDown, Archive, Hotel, Building2, BedSingle, Bus, Route, Truck, SlidersHorizontal,
+    MessageSquareText, Languages, Receipt, CalendarClock, Percent, UserPlus
 } from 'lucide-react'; 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarGroup, SidebarGroupLabel } from '@/components/ui/sidebar';
 import { usePathname, useRouter } from 'next/navigation'; 
@@ -96,7 +99,7 @@ const navConfig: { [key: string]: NavigationElement[] } = {
       key: 'admin-academics', 
       label: 'Academics', 
       icon: GraduationCap, 
-      type: 'link', // Will act as trigger
+      type: 'link', 
       children: [
         { key: 'admin-enq-cat', href: '/admin/academics/enquiry-category', label: 'Enquiry Category', icon: ListFilter, type: 'link', isSubItem: true },
         { key: 'admin-list-enq', href: '/admin/academics/list-enquiries', label: 'List Enquiries', icon: List, type: 'link', isSubItem: true },
@@ -106,16 +109,157 @@ const navConfig: { [key: string]: NavigationElement[] } = {
         { key: 'admin-manage-events', href: '/admin/academics/manage-events', label: 'Manage Events', icon: CalendarPlus, type: 'link', isSubItem: true },
       ]
     },
-    { key: 'admin-teachers', label: 'Teachers', icon: UserCheck, type: 'link', href: '/admin/users', showChevron: true }, 
-    { key: 'admin-manage-students', label: 'Manage Students', icon: Users, type: 'link', href: '/admin/users', showChevron: true }, 
-    { key: 'admin-attendance', label: 'Attendance', icon: CalendarCheck, type: 'link', href: '#', showChevron: true },
-    { key: 'admin-download', label: 'Download Page', icon: Download, type: 'link', href: '#', showChevron: true },
+    { 
+      key: 'admin-teachers-parent', 
+      label: 'Teachers', 
+      icon: UserCheck, 
+      type: 'link', 
+      children: [
+        { key: 'admin-teachers-dept', href: '/admin/teachers/department', label: 'Department', icon: Building, type: 'link', isSubItem: true },
+        { key: 'admin-teachers-list', href: '/admin/teachers/list', label: 'Teachers', icon: Users, type: 'link', isSubItem: true },
+      ]
+    },
+    { 
+      key: 'admin-manage-students-parent', 
+      label: 'Manage Students', 
+      icon: Users, 
+      type: 'link', 
+      children: [
+        { key: 'admin-students-admission', href: '/admin/students/admission-form', label: 'Admission Form', icon: FilePlus2, type: 'link', isSubItem: true },
+        { key: 'admin-students-list', href: '/admin/students/list-students', label: 'List Students', icon: ListChecks, type: 'link', isSubItem: true },
+        { key: 'admin-students-categories', href: '/admin/students/student-categories', label: 'Student Categories', icon: Tag, type: 'link', isSubItem: true },
+        { key: 'admin-students-house', href: '/admin/students/student-house', label: 'Student House', icon: Home, type: 'link', isSubItem: true },
+        { key: 'admin-students-activity', href: '/admin/students/student-activity', label: 'Student Activity', icon: Activity, type: 'link', isSubItem: true },
+        { key: 'admin-students-social', href: '/admin/students/social-category', label: 'Social Category', icon: Users2, type: 'link', isSubItem: true },
+      ]
+    },
+    { 
+      key: 'admin-attendance-parent', 
+      label: 'Attendance', 
+      icon: CalendarCheck, 
+      type: 'link', 
+      children: [
+        { key: 'admin-attendance-mark', href: '/admin/attendance/mark', label: 'Mark Attendance', icon: PencilLine, type: 'link', isSubItem: true },
+        { key: 'admin-attendance-view', href: '/admin/attendance/view', label: 'View Attendance', icon: Eye, type: 'link', isSubItem: true },
+        { key: 'admin-attendance-teacher', href: '/admin/attendance/teacher', label: 'Teacher Attendance', icon: UserCheck, type: 'link', isSubItem: true },
+      ]
+    },
+    { 
+      key: 'admin-download-parent', 
+      label: 'Download Page', 
+      icon: Download, 
+      type: 'link', 
+      children: [
+        { key: 'admin-download-assignments', href: '/admin/download/assignments', label: 'Assignments', icon: FileText, type: 'link', isSubItem: true },
+        { key: 'admin-download-materials', href: '/admin/download/study-materials', label: 'Study Materials', icon: BookOpen, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-class-section',
+      label: 'Class & Section',
+      icon: Columns,
+      type: 'link',
+      children: [
+        { key: 'admin-manage-classes', href: '/admin/class-section/manage-classes', label: 'Manage Classes', icon: RectangleHorizontal, type: 'link', isSubItem: true },
+        { key: 'admin-manage-sections', href: '/admin/class-section/manage-sections', label: 'Manage Sections', icon: SquareStack, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-exams',
+      label: 'Exams',
+      icon: ClipboardEdit,
+      type: 'link',
+      children: [
+        { key: 'admin-question-paper', href: '/admin/exams/question-paper', label: 'Question Paper', icon: FileQuestion, type: 'link', isSubItem: true },
+        { key: 'admin-add-examination', href: '/admin/exams/add-examination', label: 'Add Examination', icon: FilePlus, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-student-scores',
+      label: 'Student Scores',
+      icon: BarChart3,
+      type: 'link',
+      children: [
+        { key: 'admin-scores-class-teacher', href: '/admin/student-scores/class-teacher', label: 'Class Teacher', icon: UserSquare, type: 'link', isSubItem: true },
+        { key: 'admin-scores-subject-teacher', href: '/admin/student-scores/subject-teacher', label: 'Subject Teacher', icon: User, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-fee-collection',
+      label: 'Fee Collection',
+      icon: Banknote,
+      type: 'link',
+      children: [
+        { key: 'admin-collect-fees', href: '/admin/fee-collection/collect-fees', label: 'Collect Fees', icon: Landmark, type: 'link', isSubItem: true },
+        { key: 'admin-manage-invoice', href: '/admin/fee-collection/manage-invoice', label: 'Manage Invoice', icon: FileSpreadsheet, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-expenses',
+      label: 'Expenses',
+      icon: TrendingDown,
+      type: 'link',
+      children: [
+        { key: 'admin-expense-add', href: '/admin/expenses/expense', label: 'Expense', icon: CreditCard, type: 'link', isSubItem: true },
+        { key: 'admin-expense-category', href: '/admin/expenses/expense-category', label: 'Expense Category', icon: Archive, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-hostel',
+      label: 'Hostel',
+      icon: BedDouble,
+      type: 'link',
+      children: [
+        { key: 'admin-hostel-manage', href: '/admin/hostel/manage-hostel', label: 'Manage Hostel', icon: Hotel, type: 'link', isSubItem: true },
+        { key: 'admin-hostel-category', href: '/admin/hostel/hostel-category', label: 'Hostel Category', icon: Building2, type: 'link', isSubItem: true },
+        { key: 'admin-hostel-room', href: '/admin/hostel/hostel-room', label: 'Hostel Room', icon: BedSingle, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-transportation',
+      label: 'Transportation',
+      icon: Car,
+      type: 'link',
+      children: [
+        { key: 'admin-transport-manage', href: '/admin/transportation/transport', label: 'Transport', icon: Bus, type: 'link', isSubItem: true },
+        { key: 'admin-transport-route', href: '/admin/transportation/transport-route', label: 'Transport Route', icon: Route, type: 'link', isSubItem: true },
+        { key: 'admin-transport-vehicle', href: '/admin/transportation/manage-vehicle', label: 'Manage Vehicle', icon: Truck, type: 'link', isSubItem: true },
+      ]
+    },
     { key: 'admin-parents', label: 'Parents', icon: UsersRound, type: 'link', href: '/admin/users', showChevron: true }, 
-    // Placeholder for Accountant dropdown - not implementing fully yet
-    // { key: 'admin-accountant', label: 'Accountant', icon: Banknote, type: 'link', showChevron: true, children: [ /* ...sub-items... */ ]},
-    { key: 'admin-settings', label: 'System Settings', icon: Settings2, type: 'link', href: '#', showChevron: true },
-    { key: 'admin-role-mgmt', label: 'Role Managements', icon: UserCog, type: 'link', href: '#', showChevron: true }, 
-    { key: 'admin-user-profile', label: 'Profile', icon: UserCog, type: 'link', href: '#', showChevron: true }, // Added Profile link
+    { 
+      key: 'admin-system-settings-parent', 
+      label: 'System Settings', 
+      icon: Settings2, 
+      type: 'link', 
+      children: [
+        { key: 'admin-settings-general', href: '/admin/system-settings/general', label: 'General Settings', icon: SlidersHorizontal, type: 'link', isSubItem: true },
+        { key: 'admin-settings-sms', href: '/admin/system-settings/sms-api', label: 'Manage SMS API', icon: MessageSquareText, type: 'link', isSubItem: true },
+        { key: 'admin-settings-language', href: '/admin/system-settings/language', label: 'Manage Language', icon: Languages, type: 'link', isSubItem: true },
+        { key: 'admin-settings-payment', href: '/admin/system-settings/payment', label: 'Payment Settings', icon: CreditCard, type: 'link', isSubItem: true },
+      ]
+    },
+    {
+      key: 'admin-reports',
+      label: 'Reports',
+      icon: FilePieChart,
+      type: 'link',
+      children: [
+        { key: 'admin-reports-student-payments', href: '/admin/reports/student-payments', label: 'Student Payments', icon: Receipt, type: 'link', isSubItem: true },
+        { key: 'admin-reports-attendance', href: '/admin/reports/attendance', label: 'Attendance Report', icon: CalendarClock, type: 'link', isSubItem: true },
+        { key: 'admin-reports-exam-mark', href: '/admin/reports/exam-mark', label: 'Exam Mark Report', icon: Percent, type: 'link', isSubItem: true },
+      ]
+    },
+    { 
+      key: 'admin-role-mgmt-parent', 
+      label: 'Role Managements', 
+      icon: UserCog, 
+      type: 'link', 
+      children: [
+        { key: 'admin-role-new-admin', href: '/admin/role-managements/new-admin', label: 'New Admin', icon: UserPlus, type: 'link', isSubItem: true },
+      ]
+    },
+    { key: 'admin-user-profile', label: 'Profile', icon: UserCog, type: 'link', href: '#', showChevron: true },
     { type: 'divider', key: 'div-admin-logout'},
     { key: 'admin-logout', label: 'Logout', icon: UserMinus, type: 'link', href: '/login', action: () => { localStorage.removeItem('currentUserRole'); localStorage.removeItem('currentUserDisplayName'); } },
   ],
@@ -214,13 +358,16 @@ export default function SidebarNav() {
     }
 
     if (item.children && item.children.length > 0) {
+      // Check if any child item is active to make the parent active
+      const isAnyChildActive = item.children.some(child => child.href && pathname.startsWith(child.href));
+      
       return (
         <React.Fragment key={item.key}>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => toggleExpand(item.key)}
               className="w-full justify-start text-sm h-9"
-              variant={pathname.startsWith(effectiveHref) && effectiveHref !== '#' ? "default" : "ghost"}
+              variant={isAnyChildActive ? "default" : "ghost"} // Parent active if child is active
               asChild={false}
               aria-expanded={isExpanded}
             >
@@ -230,7 +377,7 @@ export default function SidebarNav() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           {isExpanded && (
-            <ul className="pl-4 list-none"> {/* Using ul for sub-menu for semantics, styling will make it look like sidebar items */}
+            <ul className="pl-4 list-none"> 
               {item.children.map(child => renderNavItem(child, true))}
             </ul>
           )}
@@ -239,16 +386,17 @@ export default function SidebarNav() {
     }
     
     // Regular link item or sub-item
+    const isActive = pathname === effectiveHref || (effectiveHref !== '#' && pathname.startsWith(effectiveHref));
     return (
-      <SidebarMenuItem key={item.key} className={isSubmenuItem ? "ml-3" : ""}> {/* Indent sub-items */}
+      <SidebarMenuItem key={item.key} className={isSubmenuItem ? "ml-3" : ""}> 
         <Link href={effectiveHref} passHref legacyBehavior>
           <SidebarMenuButton 
-            isActive={pathname === effectiveHref} 
-            className={`w-full justify-start text-sm h-9 ${isSubmenuItem ? 'pl-5' : ''}`} // Add more padding for sub-items
-            variant={pathname === effectiveHref ? "default" : "ghost"}
+            isActive={isActive} 
+            className={`w-full justify-start text-sm h-9 ${isSubmenuItem ? 'pl-5' : ''}`} 
+            variant={isActive ? "default" : "ghost"}
             asChild={false} 
           >
-            <IconComponent className={`h-4 w-4 mr-3 shrink-0 ${isSubmenuItem ? 'h-3.5 w-3.5' : 'h-5 w-5'}`} /> {/* Smaller icon for sub-items */}
+            <IconComponent className={`h-4 w-4 mr-3 shrink-0 ${isSubmenuItem ? 'h-3.5 w-3.5' : 'h-5 w-5'}`} /> 
             <span className="group-data-[collapsible=icon]:hidden truncate flex-grow">{item.label}</span>
             {item.showChevron && !item.children && <ChevronRight className="h-4 w-4 text-sidebar-foreground/70 group-hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:hidden" />}
           </SidebarMenuButton>
