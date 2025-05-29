@@ -1,9 +1,5 @@
-// This page simply re-uses the dynamic portfolio page logic,
-// hardcoding it for student ID '1' (or the currently logged-in student in a real app).
-import StudentPortfolioPage from '../[studentId]/portfolio/page';
-
-export default function MyPortfolioPage() {
-  // In a real app, you'd fetch the logged-in student's ID.
-  // For this example, we assume student '1' is "my" portfolio.
-  return <StudentPortfolioPage params={{ studentId: '1' }} />;
-}
+// This file is a placeholder to resolve a route conflict.
+// The actual page has been moved to src/app/(main)/student/my-portfolio/page.tsx
+// This file can be safely deleted if the src/app/(main)/student/my-portfolio/page.tsx equivalent exists.
+export {}; // Prevents this file from being treated as a page route.
+console.warn("Placeholder file to avoid route conflict: src/app/student/my-portfolio/page.tsx. Please delete if the (main) group version exists.");
