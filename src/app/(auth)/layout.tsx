@@ -1,24 +1,8 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import { Lora } from 'next/font/google';
-import '../globals.css'; // Important: include global styles relative to app directory
-import { Toaster } from "@/components/ui/toaster";
+import '../globals.css'; // Ensure global styles are available for this layout segment
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-const lora = Lora({
-  variable: '--font-lora',
-  subsets: ['latin'],
-  weight: ['400', '700'],
-});
+// Fonts are globally defined in src/app/layout.tsx, no need to redefine or reapply their variable classes here.
+// The Toaster is also globally available from src/app/layout.tsx.
 
 export const metadata: Metadata = {
   title: 'Login - Atelier Hub',
@@ -31,11 +15,11 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} antialiased bg-background text-foreground flex min-h-screen flex-col`}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    // Apply the styling previously on the <body> tag to this wrapper div.
+    // Font variables (--font-geist-sans, etc.) are already on the main <body> from the root layout.
+    <div className="antialiased bg-background text-foreground flex min-h-screen flex-col">
+      {children}
+      {/* Toaster removed as it's already present in the root layout (src/app/layout.tsx) */}
+    </div>
   );
 }
