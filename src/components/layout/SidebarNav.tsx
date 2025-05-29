@@ -154,6 +154,7 @@ const navConfig: { [key: string]: NavigationElement[] } = {
         { key: 'admin-download-materials', href: '/admin/download/study-materials', label: 'Study Materials', icon: BookOpen, type: 'link', isSubItem: true },
       ]
     },
+    { key: 'admin-parents', label: 'Parents', icon: UsersRound, type: 'link', href: '/admin/users', showChevron: true }, 
     {
       key: 'admin-class-section',
       label: 'Class & Section',
@@ -164,6 +165,7 @@ const navConfig: { [key: string]: NavigationElement[] } = {
         { key: 'admin-manage-sections', href: '/admin/class-section/manage-sections', label: 'Manage Sections', icon: SquareStack, type: 'link', isSubItem: true },
       ]
     },
+    { key: 'admin-subjects', href: '/admin/subjects', label: 'Subjects', icon: ListChecks, type: 'link', showChevron: true },
     {
       key: 'admin-exams',
       label: 'Exams',
@@ -226,7 +228,6 @@ const navConfig: { [key: string]: NavigationElement[] } = {
         { key: 'admin-transport-vehicle', href: '/admin/transportation/manage-vehicle', label: 'Manage Vehicle', icon: Truck, type: 'link', isSubItem: true },
       ]
     },
-    { key: 'admin-parents', label: 'Parents', icon: UsersRound, type: 'link', href: '/admin/users', showChevron: true }, 
     { 
       key: 'admin-system-settings-parent', 
       label: 'System Settings', 
