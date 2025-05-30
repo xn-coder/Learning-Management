@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { 
     LayoutDashboard, Users, BookOpen, Palette, Settings, FileUp, 
-    GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, 
-    UsersRound, LogIn, Home, CreditCard, Briefcase, BarChart3, 
+    GalleryHorizontalEnd, ShieldAlert, GraduationCap, UserCheck, BarChart2, DollarSign, CalendarDays, // Added new icons
+    UsersRound, LogIn, Home, CreditCard, Briefcase, BarChart3, Bed, // Imported Bed icon
     UserCog, CalendarCheck, Download, FileText, ShieldCheck, 
     ClipboardList, Banknote, BedDouble, Car, Settings2, FilePieChart, UserMinus, ChevronDown, ChevronRight,
     ListFilter, List, Users2, Send, BookCopy, CalendarPlus, Building, FilePlus2, Tag, Activity, PencilLine,
@@ -202,7 +202,8 @@ const navConfig: { [key: string]: NavigationElement[] } = {
       icon: TrendingDown,
       type: 'link',
       children: [
-        { key: 'admin-expense-add', href: '/admin/expenses/expense', label: 'Expense', icon: CreditCard, type: 'link', isSubItem: true },
+        { key: 'admin-expense-add', href: '/admin/expenses/expense', label: 'Expense', icon: CreditCard, type: 'link', isSubItem: true }, // Changed label and path
+        // The following item for 'Expense Category' is already present and confirmed to be correct.
         { key: 'admin-expense-category', href: '/admin/expenses/expense-category', label: 'Expense Category', icon: Archive, type: 'link', isSubItem: true },
       ]
     },
@@ -212,9 +213,9 @@ const navConfig: { [key: string]: NavigationElement[] } = {
       icon: BedDouble,
       type: 'link',
       children: [
-        { key: 'admin-hostel-manage', href: '/admin/hostel/manage-hostel', label: 'Manage Hostel', icon: Hotel, type: 'link', isSubItem: true },
-        { key: 'admin-hostel-category', href: '/admin/hostel/hostel-category', label: 'Hostel Category', icon: Building2, type: 'link', isSubItem: true },
-        { key: 'admin-hostel-room', href: '/admin/hostel/hostel-room', label: 'Hostel Room', icon: BedSingle, type: 'link', isSubItem: true },
+        { key: 'admin-hostel-manage', href: '/admin/hostel/manage-hostel', label: 'Manage Hostel', icon: Hotel, type: 'link', isSubItem: true, showChevron: true },
+        { key: 'admin-hostel-category', href: '/admin/hostel/hostel-category', label: 'Hostel Category', icon: Archive, type: 'link', isSubItem: true },
+        { key: 'admin-hostel-room', href: '/admin/hostel/hostel-room', label: 'Hostel Room', icon: Bed, type: 'link', isSubItem: true },
       ]
     },
     {
@@ -223,7 +224,7 @@ const navConfig: { [key: string]: NavigationElement[] } = {
       icon: Car,
       type: 'link',
       children: [
-        { key: 'admin-transport-manage', href: '/admin/transportation/transport', label: 'Transport', icon: Bus, type: 'link', isSubItem: true },
+        { key: 'admin-transport-manage', href: '/admin/transportation/transports', label: 'Transport', icon: Bus, type: 'link', isSubItem: true },
         { key: 'admin-transport-route', href: '/admin/transportation/transport-route', label: 'Transport Route', icon: Route, type: 'link', isSubItem: true },
         { key: 'admin-transport-vehicle', href: '/admin/transportation/manage-vehicle', label: 'Manage Vehicle', icon: Truck, type: 'link', isSubItem: true },
       ]
@@ -234,21 +235,21 @@ const navConfig: { [key: string]: NavigationElement[] } = {
       icon: Settings2, 
       type: 'link', 
       children: [
-        { key: 'admin-settings-general', href: '/admin/system-settings/general', label: 'General Settings', icon: SlidersHorizontal, type: 'link', isSubItem: true },
-        { key: 'admin-settings-sms', href: '/admin/system-settings/sms-api', label: 'Manage SMS API', icon: MessageSquareText, type: 'link', isSubItem: true },
-        { key: 'admin-settings-language', href: '/admin/system-settings/language', label: 'Manage Language', icon: Languages, type: 'link', isSubItem: true },
-        { key: 'admin-settings-payment', href: '/admin/system-settings/payment', label: 'Payment Settings', icon: CreditCard, type: 'link', isSubItem: true },
+        { key: 'admin-settings-general', href: '/admin/system-settings/general-settings', label: 'General Settings', icon: SlidersHorizontal, type: 'link', isSubItem: true },
+        { key: 'admin-settings-sms', href: '/admin/system-settings/manage-sms-api', label: 'Manage SMS API', icon: MessageSquareText, type: 'link', isSubItem: true },
+        { key: 'admin-settings-language', href: '/admin/system-settings/manage-language', label: 'Manage Language', icon: Languages, type: 'link', isSubItem: true },
+        { key: 'admin-settings-payment', href: '/admin/system-settings/payment-settings', label: 'Payment Settings', icon: CreditCard, type: 'link', isSubItem: true },
       ]
     },
     {
       key: 'admin-reports',
       label: 'Reports',
-      icon: FilePieChart,
+      icon: BarChart2, // Changed icon for Reports
       type: 'link',
       children: [
-        { key: 'admin-reports-student-payments', href: '/admin/reports/student-payments', label: 'Student Payments', icon: Receipt, type: 'link', isSubItem: true },
-        { key: 'admin-reports-attendance', href: '/admin/reports/attendance', label: 'Attendance Report', icon: CalendarClock, type: 'link', isSubItem: true },
-        { key: 'admin-reports-exam-mark', href: '/admin/reports/exam-mark', label: 'Exam Mark Report', icon: Percent, type: 'link', isSubItem: true },
+        { key: 'admin-reports-student-payments', href: '/admin/reports/student-payments', label: 'Student Payments', icon: DollarSign, type: 'link', isSubItem: true }, // Changed icon
+        { key: 'admin-reports-attendance', href: '/admin/reports/attendance-report', label: 'Attendance Report', icon: CalendarDays, type: 'link', isSubItem: true }, // Changed icon
+        { key: 'admin-reports-exam-mark', href: '/admin/reports/exam-mark-report', label: 'Exam Mark Report', icon: GraduationCap, type: 'link', isSubItem: true }, // Changed icon
       ]
     },
     { 

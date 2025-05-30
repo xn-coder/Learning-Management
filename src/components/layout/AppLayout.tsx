@@ -46,7 +46,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         
         <SidebarInset className="flex-1 flex flex-col">
           <Header />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-background"> {/* Ensure main content area has app background */}
+          <main className="w-full flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto bg-background"> {/* Ensure main content area has app background */}
             {children}
           </main>
         </SidebarInset>
